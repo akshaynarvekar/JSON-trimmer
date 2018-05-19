@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+}
+
+/***************************Title text*******************************/
+.title-text{
+  font-size: -webkit-xxx-large;
+  margin-top: 150px;
+  margin-bottom: 50px;
+}
+/***************************Title text ends**************************/
+/***************************Result container*************************/
+.json-result-container{
+  margin-top: 50px;
+}
+/***************************Result container ends********************/
