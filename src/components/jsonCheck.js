@@ -24,37 +24,60 @@ class JSONChecker extends Component{
   * Removes empty elements from JSON.
   *
   * @method jsonTrimmer
+  * @param {Object} jsonObj The JSON to be trimmed
   * @return {Object} The trimmed JSON
   */
   jsonTrimmer(jsonObj){
+    var initThis = this;
     for(var elem in jsonObj){//loop through the elements
-      if(typeof jsonObj[elem] === "string"){//check if obj is string
-        jsonObj[elem] = jsonObj[elem].trim();//trim the string
-      }
-      if (jsonObj[elem] === null ||//check if elem is null
-          jsonObj[elem] === "" ||//check if elem is ""
-          jsonObj[elem] === undefined ||//check if elem is undefined
-          (Object.keys(jsonObj[elem]).length === 0 && jsonObj[elem].constructor === Object) ||//check if elem is empty {}
-          Array.isArray(jsonObj[elem]) && jsonObj[elem].length === 0) {//check if elem is empty []
+      if (initThis.checkIfEmpty(jsonObj[elem])) {//check if elem is empty []
         delete jsonObj[elem];//remove the element
       }else if (Object.prototype.toString.call(jsonObj[elem]) === '[object Object]' ||//check for nested Obj
                 Array.isArray(jsonObj[elem])) {//check for nested array
-        jsonObj[elem] = this.jsonTrimmer(jsonObj[elem]);//recursive call for nested obj
-        if(Array.isArray(jsonObj[elem]) && jsonObj[elem].includes(undefined)){//check if result has empty elems in array
-          for (var i = 0; i < jsonObj[elem].length; i++) {//remove the elements
-            if (jsonObj[elem][i] === undefined) {
-              jsonObj[elem].splice(i, 1);
-              i--;
-            }
-          }
-        }
-        if ((Object.keys(jsonObj[elem]).length === 0 && jsonObj[elem].constructor === Object) ||//check if result is empty {}
-            Array.isArray(jsonObj[elem]) && jsonObj[elem].length === 0) {//check if result is empty []
+        jsonObj[elem] = initThis.jsonTrimmer(jsonObj[elem]);//recursive call for nested obj
+        jsonObj[elem] = initThis.removeEmptyArrElem(jsonObj[elem]);
+        if (initThis.checkIfEmpty(jsonObj[elem])) {
               delete jsonObj[elem];//delete the element
         }
       }
     }
     return jsonObj;//return te result
+  }
+
+  /**
+  * Check if the JSON element is empty
+  *
+  * @method checkIfEmpty
+  * @param {Object} jsonObj The JSON to be trimmed
+  * @return {Boolean} the boolean return value
+  */
+  checkIfEmpty(jsonObj){
+    return (
+        jsonObj === null ||//check if elem is null
+        (typeof jsonObj === "string" && (jsonObj.split(" ").length - 1 === jsonObj.length)) ||//check if elem is ""
+        jsonObj === undefined ||//check if elem is undefined
+        (Object.keys(jsonObj).length === 0 && jsonObj.constructor === Object) ||//check if elem is empty {}
+        Array.isArray(jsonObj) && jsonObj.length === 0
+      );
+  }
+
+  /**
+  * Remove empty elem from Array
+  *
+  * @method removeEmptyArrElem
+  * @param {Object} jsonObj The JSON to be trimmed
+  * @return {Object} The result object
+  */
+  removeEmptyArrElem(jsonObj){
+    if(Array.isArray(jsonObj) && jsonObj.includes(undefined)){//check if result has empty elems in array
+      for (var i = 0; i < jsonObj.length; i++) {//remove the elements
+        if (jsonObj[i] === undefined) {
+          jsonObj.splice(i, 1);
+          i--;
+        }
+      }
+    }
+    return jsonObj;
   }
 
   /**
