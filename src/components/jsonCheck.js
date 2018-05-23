@@ -35,8 +35,8 @@ class JSONChecker extends Component{
       }else if (Object.prototype.toString.call(jsonObj[elem]) === '[object Object]' ||//check for nested Obj
                 Array.isArray(jsonObj[elem])) {//check for nested array
         jsonObj[elem] = initThis.jsonTrimmer(jsonObj[elem]);//recursive call for nested obj
-        jsonObj[elem] = initThis.removeEmptyArrElem(jsonObj[elem]);
-        if (initThis.checkIfEmpty(jsonObj[elem])) {
+        jsonObj[elem] = initThis.removeEmptyArrElem(jsonObj[elem]);//removes the empty array elements
+        if (initThis.checkIfEmpty(jsonObj[elem])) { //check if the parent is empty
               delete jsonObj[elem];//delete the element
         }
       }
@@ -57,7 +57,7 @@ class JSONChecker extends Component{
         (typeof jsonObj === "string" && (jsonObj.split(" ").length - 1 === jsonObj.length)) ||//check if elem is ""
         jsonObj === undefined ||//check if elem is undefined
         (Object.keys(jsonObj).length === 0 && jsonObj.constructor === Object) ||//check if elem is empty {}
-        Array.isArray(jsonObj) && jsonObj.length === 0
+        (Array.isArray(jsonObj) && jsonObj.length === 0)//check if elem is empty []
       );
   }
 
